@@ -12,6 +12,9 @@ export function Reducer(state, [type, payload]) {
         case 'SET PRICE DATA': 
             return { ...state, priceData: payload }; 
             
+        case 'SET STORIES': 
+            return { ...state, stories: payload }; 
+            
     }
 
 }
