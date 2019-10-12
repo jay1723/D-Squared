@@ -1,7 +1,8 @@
 
 export const ReducerInitialState = {
 
-    priceData: null
+    priceData: null, 
+    tickers: ["AAPL", "GOOG", "AMZN"]
 
 };
 
@@ -14,6 +15,10 @@ export function Reducer(state, [type, payload]) {
             
         case 'SET STORIES': 
             return { ...state, stories: payload }; 
+
+        case 'SET TICKERS': 
+            return { ...state, tickers: payload }; 
+
             
     }
 
