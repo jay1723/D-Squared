@@ -1,0 +1,25 @@
+{
+  "name": "d-squared",
+  "version": "1.0.0",
+  "description": "Due Diligence analysis",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jay1723/D-Squared.git"
+  },
+  "keywords": [
+    "stocks",
+    "api",
+    "news",
+    "sentiment-analysis"
+  ],
+  "author": "Bryce,Dylan,Jay",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jay1723/D-Squared/issues"
+  },
+  "homepage": "https://github.com/jay1723/D-Squared#readme"
+}
