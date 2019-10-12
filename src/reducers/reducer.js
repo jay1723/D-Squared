@@ -21,6 +21,8 @@ export function Reducer(state, [type, payload]) {
             return { ...state, selectedTickers: payload }; 
 
             
+        case 'SET COMPANY':
+            return {...state, company: payload};
     }
 
 }
