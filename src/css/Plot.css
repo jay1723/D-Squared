@@ -1,0 +1,12 @@
+svg {
+    background: #2d354c; 
+    vertical-align: top;
+}
+
+svg text {
+    color: #e1e1e4; 
+}
+
+.tick line {
+    color: #e1e1e4; 
+}
