@@ -21,5 +21,10 @@
   "bugs": {
     "url": "https://github.com/jay1723/D-Squared/issues"
   },
-  "homepage": "https://github.com/jay1723/D-Squared#readme"
+  "homepage": "https://github.com/jay1723/D-Squared#readme",
+  "devDependencies": {
+    "alphavantage": "^2.0.0",
+    "express": "^4.17.1",
+    "newsapi": "^2.4.0"
+  }
 }
