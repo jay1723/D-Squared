@@ -1,30 +1,31 @@
 {
   "name": "d-squared",
-  "version": "1.0.0",
-  "description": "Due Diligence analysis",
-  "main": "index.js",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
+    "react-scripts": "3.2.0"
+  },
   "scripts": {
-    "test": "npm test"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jay1723/D-Squared.git"
+  "eslintConfig": {
+    "extends": "react-app"
   },
-  "keywords": [
-    "stocks",
-    "api",
-    "news",
-    "sentiment-analysis"
-  ],
-  "author": "Bryce,Dylan,Jay",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jay1723/D-Squared/issues"
-  },
-  "homepage": "https://github.com/jay1723/D-Squared#readme",
-  "devDependencies": {
-    "alphavantage": "^2.0.0",
-    "express": "^4.17.1",
-    "newsapi": "^2.4.0"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
