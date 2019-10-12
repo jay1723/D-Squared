@@ -20,6 +20,8 @@ export function Reducer(state, [type, payload]) {
             return { ...state, tickers: payload }; 
 
             
+        case 'SET COMPANY':
+            return {...state, company: payload};
     }
 
 }

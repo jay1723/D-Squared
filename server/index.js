@@ -23,15 +23,14 @@ function getNewsStories(company){
 }
 async function asyncCall(company){
     let result = await getNewsStories(company).catch((err) => console.log(err));
-    // console.log(result);
     let finalResult = await getSentimentForNewsStories(result).catch((err) => console.log(err));
-    // console.log(finalResult);
     return finalResult;
 }
 app.get('/getSentiment', async function(req, res){
     // console.log(req);
     console.log(`getSentiment called with parameter ${req.body.company}`);
-    let company = req.body.company;
+    // let company = req.body.company;
+    let company = req.query.company;
     let ret = await asyncCall(company);
     console.log(ret);
     res.send(ret);
