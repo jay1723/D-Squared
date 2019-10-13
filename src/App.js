@@ -1,12 +1,18 @@
 import React, { useReducer, useState, useEffect } from 'react';
-import { Layout, Menu, Icon, Tree, Input, Radio, Card } from 'antd';
-import Plot from "./components/Plot.jsx"; 
+import { Layout, Tree, Input, Radio, Row, Col } from 'antd';
 import API from "./components/Api.jsx"; 
 import { RootProvider } from "./context.js"; 
 import { ReducerInitialState, Reducer } from "./reducers/reducer.js"; 
+<<<<<<< HEAD
 import StoryScroller from "./components/StoryScroller.jsx";
 import ReportViewer from "./components/ReportViewer.jsx";
 import DocFrame from "./components/DocFrame.jsx";
+=======
+import StoryScroller from "./components/StoryScroller.jsx"; 
+import CandlestickChart from "./components/CandlestickChart.jsx"; 
+import SentimentChart from "./components/SentimentChart.jsx";
+import MultiPlot from "./components/MultiPlot.jsx"; 
+>>>>>>> d1da90db1cb77492ced74aa65b24bb10a23768fd
 import 'antd/dist/antd.css';
 import './css/App.css'; 
 
@@ -67,7 +73,7 @@ function App() {
 
         <Layout>
           <Header style={{ background: '#fff' }}>
-
+{/* 
             <Radio.Group 
             defaultValue={isMulti ? 'multiple' : 'single'} 
             buttonStyle="solid"
@@ -83,7 +89,7 @@ function App() {
             >
               <Radio.Button value="single">Single</Radio.Button>
               <Radio.Button value="multiple">Multiple</Radio.Button>
-            </Radio.Group>
+            </Radio.Group> */}
 
           </Header>
           <Content
@@ -94,30 +100,45 @@ function App() {
               minHeight: 280,
             }}
           >
-            <div className="App" style={{ width: "100%" }}>
-              {!isMulti ? <div>
-                            {state.selectedTickers.length === 0 ? null : 
-                              (() => {
-                                let ticker = state.selectedTickers[0]; 
-                                if (state.sentiments[ticker] && state.priceData[ticker]) {
-                                  return <React.Fragment>
-                                    <Plot ticker={ticker}/>
-                                    <StoryScroller ticker={ticker} width={state.plotWidth}/>
-                                    <ReportViewer/>
-                                    <DocFrame/>
-                                  </React.Fragment>
-                                } else {
-                                  return null; 
-                                }
-                                
-                              })()
+              {!isMulti ? 
+                          (state.selectedTickers.length === 0 ? null : 
+                                (() => {
+                                  let ticker = state.selectedTickers[0]; 
+                                  if (state.sentiments[ticker] && state.priceData[ticker]) {
+                                    return <React.Fragment>
+                                      <Row type="flex" justify="center" align="top">
+                                        <Col style={{ width: state.plotWidth }}>
+                                          <div>
+                                            <CandlestickChart ticker={ticker}/>
+                                            <SentimentChart ticker={ticker}/>
+                                          </div>
+                                        </Col>
+                                      </Row>
+                                      <Row type="flex" justify="center" align="top">
+                                        <Col style={{ width: state.plotWidth }}>
+                                          <StoryScroller ticker={ticker} width={state.plotWidth}/>
+                                        </Col>
+                                      </Row>
+                                      <Row type="flex" justify="center" align="top">
+                                        <Col style={{ width: state.plotWidth }}>
+                                          <ReportViewer/>
+                                          <DocFrame/>
+                                        </Col>
+                                      </Row>
+                                      
 
-                            }
-                          </div> 
+                                    </React.Fragment>
+                                      
+                                      
+                                  } else {
+                                    return null; 
+                                  }
+                                  
+                                })()
+                          )
                           : null
+                    
               }
-            </div>
-
 
           </Content>
         </Layout>

@@ -58,12 +58,12 @@ app.get('/getStockInfo', async function(req, res){
 })
 
 app.get('/getSentiment', async function(req, res){
-    // console.log(req);
+    console.log(req);
     // let company = req.body.company;
     let company = req.query.company;
     console.log(`getSentiment called with parameter ${company}`);
     let ret = await asyncCall(company);
-    console.log(ret);
+    console.log('return', ret); 
     res.send(ret);
 })
 
@@ -93,14 +93,23 @@ function getNewsStories(company){
     })
 }
 async function asyncCall(company){
-    let result = await getNewsStories(company).catch((err) => console.log(err));
-    let finalResult = await getSentimentForNewsStories(result).catch((err) => console.log(err));
-    return finalResult;
+    try {
+        let result = await getNewsStories(company).catch((err) => console.log(err));
+        let finalResult = await getSentimentForNewsStories(result).catch((err) => console.log('err:', err));
+        return finalResult;
+    } catch(err) {
+        return []; 
+    }
 }
 
-function getSentimentForNewsStories(stories){
-    return new Promise(resolve => {
+function getSentimentForNewsStories(stories) {
+
+    return new Promise((resolve, reject) => {
         let count = stories.articles.length > 10 ? 10 : stories.articles.length;
+        if (count === 0){
+            resolve([]);
+            return; 
+        }
         let datastore = [];
         let tmp = count;
         for (let i = 0; i < count; i++){
@@ -114,16 +123,18 @@ function getSentimentForNewsStories(stories){
             };
             
             function callback(error, resp, body) {
-                if (!error && resp.statusCode == 200) {
-                    article.sentiment = resp.body;
-                    datastore.push(article);
-                    tmp -= 1;
-                    if (tmp == 0){
-                        resolve(datastore)
-                    }
+                if (error || resp.statusCode != 200) {
+                    reject(); 
+                }
+                article.sentiment = resp.body;
+                datastore.push(article);
+                tmp -= 1;
+                if (tmp == 0){
+                    resolve(datastore)
                 }
             }
             request(options, callback);
         }
-        })
-    }
+    });
+
+}
