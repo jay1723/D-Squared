@@ -2,8 +2,10 @@ const NewsAPI = require('newsapi');
 const dotenv = require('dotenv');
 const express = require('express');
 const app = express();
+const cors = require('cors');
+app.use(cors());
 const port = 4000;
-app.use(express.json())
+app.use(express.json());
 const request = require('request');
 
 dotenv.config(); 
