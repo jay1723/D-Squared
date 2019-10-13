@@ -63,7 +63,7 @@ app.listen(port, () => console.log(`listening on http://localhost:${port}`));
 
 // Helper functions that call APIs
 const history = async (sym) => {
-    const historyData = await iex.history(sym, {"period": "1y"});
+    const historyData = await iex.history(sym, {"period": "3m"});
     // do something with returned quote data
     return historyData;
 };
