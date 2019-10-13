@@ -1,5 +1,5 @@
 import React, { useReducer, useState, useEffect } from 'react';
-import { Layout, Menu, Icon, Tree, Input, Radio, Card } from 'antd';
+import { Layout, Tree, Input, Radio, Row, Col } from 'antd';
 import Plot from "./components/Plot.jsx"; 
 import API from "./components/Api.jsx"; 
 import { RootProvider } from "./context.js"; 
@@ -92,28 +92,35 @@ function App() {
               minHeight: 280,
             }}
           >
-            <div className="App" style={{ width: "100%" }}>
-              {!isMulti ? <div>
-                            {state.selectedTickers.length === 0 ? null : 
-                              (() => {
-                                let ticker = state.selectedTickers[0]; 
-                                if (state.sentiments[ticker] && state.priceData[ticker]) {
-                                  return <React.Fragment>
-                                    <Plot ticker={ticker}/>
-                                    <StoryScroller ticker={ticker} width={state.plotWidth}/>
-                                  </React.Fragment>
-                                } else {
-                                  return null; 
-                                }
-                                
-                              })()
+              {!isMulti ? 
+                          (state.selectedTickers.length === 0 ? null : 
+                                (() => {
+                                  let ticker = state.selectedTickers[0]; 
+                                  if (state.sentiments[ticker] && state.priceData[ticker]) {
+                                    return <React.Fragment>
+                                      <Row type="flex" justify="center" align="top">
+                                        <Col style={{ width: state.plotWidth }}>
+                                          <Plot ticker={ticker}/>
+                                        </Col>
+                                      </Row>
+                                      <Row type="flex" justify="center" align="top">
+                                        <Col style={{ width: state.plotWidth }}>
+                                          <StoryScroller ticker={ticker} width={state.plotWidth}/>
+                                        </Col>
+                                      </Row>
 
-                            }
-                          </div> 
+
+                                    </React.Fragment>
+                                      
+                                      
+                                  } else {
+                                    return null; 
+                                  }
+                                  
+                                })()
+                          )
                           : null
               }
-            </div>
-
 
           </Content>
         </Layout>
