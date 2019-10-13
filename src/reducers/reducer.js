@@ -15,8 +15,8 @@ export const ReducerInitialState = {
     selectedTickers: [], 
     
     // the dimensions for plots 
-    plotWidth: 650, 
-    plotHeight: 300,
+    plotWidth: 1350, 
+    plotHeight: 400,
     filings: {}
 };
 
@@ -41,6 +41,9 @@ export function Reducer(state, [type, payload]) {
             
         case 'SET COMPANY':
             return {...state, company: payload};
+
+        case 'SET TICKER TO NAME': 
+            return { ...state, tickerToName: payload }; 
 
         case 'SET FILING INDEX':
             return{...state, filings: payload}

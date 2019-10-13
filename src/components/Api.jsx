@@ -15,13 +15,16 @@ export default function API(props) {
         let url = "http://localhost:4000/getNasdaqTicker";
         let getData = async () => {
             let data = await fetch(url).then(response => response.json()); 
+            let tickerToName = {}; 
             data = data.map(d => {
                 let newD = {}
                 newD['name'] = d['Company Name']; 
                 newD['ticker'] = d['Symbol']; 
+                tickerToName[newD['ticker']] = newD['name']; 
                 return newD; 
             }).slice(0,100); 
             dispatch(['SET ALL TICKERS', data]);
+            dispatch(['SET TICKER TO NAME', tickerToName])
         }
 
         getData();
@@ -34,7 +37,7 @@ export default function API(props) {
 
         let makeUrls = ticker => ({
             stonks: `http://localhost:4000/getStockInfo?ticker=${ticker}`, 
-            sentiments: `http://localhost:4000/getSentiment?company=${ticker}`
+            sentiments: `http://localhost:4000/getSentiment?company=${state.tickerToName[ticker]}`
         }); 
 
         // get all tickers which we need to get data for 
@@ -123,16 +126,16 @@ export default function API(props) {
 
     // }, [state.selectedCompanies]); 
 
-    useEffect(() => {
-        let url = "http://localhost:4000/secforms?ticker=" + state.company;
-        let getData = async () => {
-            let data = await fetch(url).then(response => response.json())
-            dispatch(['SET FILING INDEX', data]);
-        }
+    // useEffect(() => {
+    //     let url = "http://localhost:4000/secforms?ticker=" + state.company;
+    //     let getData = async () => {
+    //         let data = await fetch(url).then(response => response.json())
+    //         dispatch(['SET FILING INDEX', data]);
+    //     }
 
-        getData();
+    //     getData();
 
-    }, [state.selectedCompanies]); 
+    // }, [state.selectedCompanies]); 
     
     return null;
 }
