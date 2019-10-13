@@ -37,7 +37,8 @@ export function Reducer(state, [type, payload]) {
             return { ...state, allTickers: payload }; 
 
         case 'SET SELECTED TICKERS': 
-            return { ...state, selectedTickers: payload }; 
+            
+            return { ...state, selectedTickers: payload, curFiling: '' }; 
 
         case 'SET STORY SCROLLER PROPOSAL': 
             return { ...state, storyScrollerProposal: payload }; 

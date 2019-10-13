@@ -142,6 +142,7 @@ export default function API(props) {
     // }, [state.selectedCompanies]); 
 
     useEffect(() => {
+
         let tickers = state.selectedTickers.slice(); 
         let baseurl = "http://localhost:4000/secforms?ticker=";
 
@@ -164,17 +165,9 @@ export default function API(props) {
             dispatch(['SET FILING INDEX', newIdx]); 
         }
 
-    // useEffect(() => {
-    //     let url = "http://localhost:4000/secforms?ticker=" + state.company;
-    //     let getData = async () => {
-    //         let data = await fetch(url).then(response => response.json())
-    //         dispatch(['SET FILING INDEX', data]);
-    //     }
-
-    //     getData();
+        getData(); 
 
     }, [state.selectedTickers]); 
-    // }, [state.selectedCompanies]); 
     
     console.log('rerender shadow');
     return <div style={{ display: 'none' }}>{state.selectedTickers.map(ticker => <p>{ticker}</p>)}</div>;

@@ -69,9 +69,13 @@ function App() {
 
         <Layout>
           <Header style={{ background: '#fff' }}>
-          <img src={require('./D2logo.svg')} className="zoomed" width="64" height="64" align="right"/>
-            {/* 
-            <Radio.Group 
+          <Row type="flex" justify="center">
+            <Col span={2}>
+              <img src={require('./D2logo.svg')} className="zoomed" width="64" height="64" align="center"/>
+            </Col>
+          </Row>
+          
+            {/* <Radio.Group 
             defaultValue={isMulti ? 'multiple' : 'single'} 
             buttonStyle="solid"
             onChange={e => {
@@ -86,7 +90,7 @@ function App() {
             >
               <Radio.Button value="single">Single</Radio.Button>
               <Radio.Button value="multiple">Multiple</Radio.Button>
-            </Radio.Group>
+            </Radio.Group> */}
           </Header>
           <Content
             style={{
