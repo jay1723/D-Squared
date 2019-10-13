@@ -19,8 +19,6 @@ const formatChange = (y0, y1) => {
 const xScale = d3.scaleBand(); 
 const yScale = d3.scaleLog(); 
 
-const datetimeToDate = (datetime) => new Date(datetime.toDateString());
-
 export default function Plot(props) {
     
     const { ticker } = props; 
@@ -33,26 +31,6 @@ export default function Plot(props) {
 
     let sentiment = state.sentiments[ticker].slice(); 
     let data = state.priceData[ticker].slice();
-
-    // parse sentiment array 
-    for (let i = 0; i < sentiment.length; i++) {
-        let oldD = sentiment[i];
-        let newD = {}; 
-        let obj = JSON.parse(oldD['sentiment']); 
-        let { label } = obj; 
-        let probability = obj['probability'][label]; 
-        newD['date'] = datetimeToDate(new Date(oldD['publishedAt'])); 
-        newD['score'] = probability; 
-        newD['type'] = label; 
-        sentiment[i] = newD; 
-    }
-
-    // parse price data 
-    for (let i = 0; i < data.length; i++) {
-        data[i]['date'] = datetimeToDate(new Date(data[i]['date'])); 
-    }
-
-    sentiment = _.sortBy(sentiment, d => d.date); 
 
     const [initialized, setInitialized] = useState(false); 
 
@@ -150,8 +128,7 @@ export default function Plot(props) {
             let index = -1; 
             let stories = state.sentiments[ticker].slice(); 
             for (let j = 0; j < stories.length; j++) {
-                let newdate = datetimeToDate(new Date(stories[j]['publishedAt'])); 
-                if (newdate.valueOf() === story.date.valueOf()) {
+                if (stories[j].date.valueOf() === story.date.valueOf()) {
                     index = j; 
                     break; 
                 }

@@ -13,7 +13,6 @@ export default function StoryScroller(props) {
     let { width, ticker } = props; 
 
     let stories = state.sentiments[ticker].slice(); 
-    stories = _.sortBy(stories, d => d['publishedAt']); 
 
     const scrollTo = useSmoothScroll('x', carouselRef);
 

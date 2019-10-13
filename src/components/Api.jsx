@@ -3,6 +3,8 @@ import React, { useEffect } from "react";
 import _ from "lodash"; 
 import { declareOpaqueType } from "@babel/types";
 
+const datetimeToDate = (datetime) => new Date(datetime.toDateString());
+
 export default function API(props) {
 
     const { state, dispatch } = useRootContext(); 
@@ -64,13 +66,40 @@ export default function API(props) {
                 proms.push(fetch(sentiments).then(response => response.json())); 
             }
 
+            let parseSentimentArray = sentiment => {
+                for (let i = 0; i < sentiment.length; i++) {
+                    let oldD = sentiment[i];
+                    let newD = Object.assign({}, oldD);
+                    let obj = JSON.parse(oldD['sentiment']); 
+                    let { label } = obj; 
+                    let probability = obj['probability'][label]; 
+                    newD['date'] = datetimeToDate(new Date(oldD['publishedAt'])); 
+                    newD['score'] = probability; 
+                    newD['type'] = label; 
+                    sentiment[i] = newD; 
+                }
+                return sentiment; 
+            }; 
+
+            let parsePriceArray = data => {
+                for (let i = 0; i < data.length; i++) {
+                    data[i]['date'] = datetimeToDate(new Date(data[i]['date'])); 
+                }
+                return data; 
+            }
+
             let result = await Promise.all(proms); 
             let newPriceData = {}; 
             let newSentiments = {}; 
             let i = 0; 
             for (let ticker of tickers) {
-                newPriceData[ticker] = result[i]; 
-                newSentiments[ticker] = result[i+1]; 
+                
+                newPriceData[ticker] = parsePriceArray(result[i]); 
+                newSentiments[ticker] = parseSentimentArray(result[i+1]); 
+
+                newPriceData[ticker] = _.sortBy(newPriceData[ticker], d => d.date); 
+                newSentiments[ticker] = _.sortBy(newSentiments[ticker], d => d.date); 
+
                 i += 2; 
             }
 
