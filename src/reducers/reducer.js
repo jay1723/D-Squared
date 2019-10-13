@@ -44,6 +44,9 @@ export function Reducer(state, [type, payload]) {
 
         case 'SET FILING INDEX':
             return{...state, filings: payload}
+
+        case 'SET CURRENT FILING':
+            return{...state, curFiling: payload}
     }
 
 }

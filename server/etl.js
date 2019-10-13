@@ -6,6 +6,16 @@ let bigoloop = function(){
         j++;
     }
 }
+exports.transformReport = async function(url){
+    return new Promise((resolve,reject) => {
+        let doc;
+        console.log("https://www.sec.gov/Archives/"+url);
+        request.get("https://www.sec.gov/Archives/"+url, (err,res,body) =>{
+             let matches = body.match(/<html>[\s\S]*<\/html>/mi);
+             doc = matches && matches.length > 0? matches[0]:body;
+        }).then(()=>{resolve(doc)});
+    });
+};
 exports.createDocIdx = function(){
     return new Promise((resolve,reject)=>{
         let idx = {};

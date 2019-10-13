@@ -4,7 +4,9 @@ import Plot from "./components/Plot.jsx";
 import API from "./components/Api.jsx"; 
 import { RootProvider } from "./context.js"; 
 import { ReducerInitialState, Reducer } from "./reducers/reducer.js"; 
-import StoryScroller from "./components/StoryScroller.jsx"; 
+import StoryScroller from "./components/StoryScroller.jsx";
+import ReportViewer from "./components/ReportViewer.jsx";
+import DocFrame from "./components/DocFrame.jsx";
 import 'antd/dist/antd.css';
 import './css/App.css'; 
 
@@ -101,6 +103,8 @@ function App() {
                                   return <React.Fragment>
                                     <Plot ticker={ticker}/>
                                     <StoryScroller ticker={ticker} width={state.plotWidth}/>
+                                    <ReportViewer/>
+                                    <DocFrame/>
                                   </React.Fragment>
                                 } else {
                                   return null; 

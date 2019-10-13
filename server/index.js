@@ -39,6 +39,19 @@ app.get('/secforms', async function(req,res){
     res.send(filings);
 });
 
+app.get('/filing', async function(req,res){
+    let url = req.query.url;
+    if(url === undefined){
+        res.status(400).send({
+            message: 'Please provide a url for a filing'
+         });
+         return;
+    }
+    let page = await etl.transformReport(url);
+    // console.log(page);
+    res.send(page);
+});
+
 app.get('/getStockInfo', async function(req, res){
     let result = await history(req.query.ticker);
     res.send(result);

@@ -18,7 +18,7 @@ export default function API(props) {
                 newD['name'] = d['Company Name']; 
                 newD['ticker'] = d['Symbol']; 
                 return newD; 
-            }).slice(0,100); 
+            }).slice(0,1000); 
             dispatch(['SET ALL TICKERS', data]);
         }
 
@@ -95,15 +95,31 @@ export default function API(props) {
     // }, [state.selectedCompanies]); 
 
     useEffect(() => {
-        let url = "http://localhost:4000/secforms?ticker=" + state.company;
-        let getData = async () => {
-            let data = await fetch(url).then(response => response.json())
-            dispatch(['SET FILING INDEX', data]);
+        let tickers = state.selectedTickers.slice(); 
+        let baseurl = "http://localhost:4000/secforms?ticker=";
+
+        let getData = async () => { 
+            // request data for all new tickers 
+            let proms = []; 
+            for (let ticker of tickers) {
+                proms.push(fetch(baseurl+ticker).then(response => response.json())); 
+            }
+            
+            let result = await Promise.all(proms);
+            let newIdx = {};
+            let i = 0;
+
+            for(let ticker of tickers){
+                newIdx[ticker] = result[i];
+                i++;
+            }
+
+            dispatch(['SET FILING INDEX', newIdx]); 
         }
 
         getData();
 
-    }, [state.selectedCompanies]); 
+    }, [state.selectedTickers]); 
     
     return null;
 }
