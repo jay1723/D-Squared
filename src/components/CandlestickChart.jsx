@@ -19,18 +19,17 @@ const formatChange = (y0, y1) => {
 const xScale = d3.scaleBand(); 
 const yScale = d3.scaleLog(); 
 
-export default function Plot(props) {
+export default function CandlestickChart(props) {
     
     const { ticker } = props; 
-    const { state, dispatch } = useRootContext(); 
+    const { state } = useRootContext(); 
     const candlestickChartRef = useRef();
-    const sentimentChartRef = useRef(); 
 
     let width = state.plotWidth; 
     let height = state.plotHeight; 
 
-    let sentiment = state.sentiments[ticker].slice(); 
     let data = state.priceData[ticker].slice();
+    let sentiment = state.sentiments[ticker].slice(); 
 
     const [initialized, setInitialized] = useState(false); 
 
@@ -118,64 +117,26 @@ export default function Plot(props) {
 
     }
 
-    let createSentimentChart = () => {
 
-        let svg = d3.select(sentimentChartRef.current); 
-
-        let circleScale = d3.scaleLinear().domain([0, 1]).range([3, 10]); 
-
-        let onStoryClick = (story) => {
-            let index = -1; 
-            let stories = state.sentiments[ticker].slice(); 
-            for (let j = 0; j < stories.length; j++) {
-                if (stories[j].date.valueOf() === story.date.valueOf()) {
-                    index = j; 
-                    break; 
-                }
-            }
-            let proposal = { ticker, index }; 
-            console.log(proposal);
-            dispatch(['SET STORY SCROLLER PROPOSAL', proposal]); 
-        }
-
-        svg.append('g')
-            .selectAll('circle')
-            .data(sentiment)
-            .enter()
-            .append('circle')
-                .on('click', onStoryClick)
-                .attr('r', d => circleScale(d.score))
-                .attr('cx', d => {
-                    return xScale(d.date); 
-                })
-                .attr('cy', 20)
-                .attr('stroke', '#e1e1e4')
-                .attr('stroke-width', .5)
-                .attr('fill', d => d.type === 'pos' ? 'green' : d.type === 'neutral' ? 'grey' : 'red');
-
-    }
 
     useEffect(() => {
 
         if (candlestickChartRef.current && 
-            sentimentChartRef.current && 
             height && 
             width && 
             !initialized) {
 
             createCandleStickChart(); 
-            createSentimentChart();
             
             setInitialized(true); 
 
         }
 
-    }, [candlestickChartRef.current, sentimentChartRef.current, height, width]); 
+    }, [candlestickChartRef.current, height, width]); 
 
     return (
         <div>
             <svg style={{ height, width }} ref={candlestickChartRef}/>
-            <svg style={{ height: 40, width }} ref={sentimentChartRef}/>
         </div>
     );
 

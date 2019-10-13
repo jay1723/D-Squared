@@ -1,10 +1,11 @@
 import React, { useReducer, useState, useEffect } from 'react';
 import { Layout, Tree, Input, Radio, Row, Col } from 'antd';
-import Plot from "./components/Plot.jsx"; 
 import API from "./components/Api.jsx"; 
 import { RootProvider } from "./context.js"; 
 import { ReducerInitialState, Reducer } from "./reducers/reducer.js"; 
 import StoryScroller from "./components/StoryScroller.jsx"; 
+import CandlestickChart from "./components/CandlestickChart.jsx"; 
+import SentimentChart from "./components/SentimentChart.jsx";
 import 'antd/dist/antd.css';
 import './css/App.css'; 
 
@@ -100,7 +101,10 @@ function App() {
                                     return <React.Fragment>
                                       <Row type="flex" justify="center" align="top">
                                         <Col style={{ width: state.plotWidth }}>
-                                          <Plot ticker={ticker}/>
+                                          <div>
+                                            <CandlestickChart ticker={ticker}/>
+                                            <SentimentChart ticker={ticker}/>
+                                          </div>
                                         </Col>
                                       </Row>
                                       <Row type="flex" justify="center" align="top">
