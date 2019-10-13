@@ -19,6 +19,8 @@ const formatChange = (y0, y1) => {
 const xScale = d3.scaleBand(); 
 const yScale = d3.scaleLog(); 
 
+const datetimeToDate = (datetime) => new Date(datetime.toDateString());
+
 export default function Plot(props) {
     
     const { ticker } = props; 
@@ -29,11 +31,32 @@ export default function Plot(props) {
     let width = state.plotWidth; 
     let height = state.plotHeight; 
 
+    let sentiment = state.sentiments[ticker].slice(); 
+    let data = state.priceData[ticker].slice();
+
+    // parse sentiment array 
+    for (let i = 0; i < sentiment.length; i++) {
+        let oldD = sentiment[i];
+        let newD = {}; 
+        let obj = JSON.parse(oldD['sentiment']); 
+        let { label } = obj; 
+        let probability = obj['probability'][label]; 
+        newD['date'] = datetimeToDate(new Date(oldD['publishedAt'])); 
+        newD['score'] = probability; 
+        newD['type'] = label; 
+        sentiment[i] = newD; 
+    }
+
+    // parse price data 
+    for (let i = 0; i < data.length; i++) {
+        data[i]['date'] = datetimeToDate(new Date(data[i]['date'])); 
+    }
+
+    sentiment = _.sortBy(sentiment, d => d.date); 
+
     const [initialized, setInitialized] = useState(false); 
 
     let xAxis = (g) => {
-
-        let data = state.priceData; 
         
         g   
             .attr("transform", `translate(0,${height - margin.bottom})`)
@@ -60,60 +83,26 @@ export default function Plot(props) {
         
     } 
             
-    let updateScales = (data) => {
+    let updateScales = () => {
 
-        xScale  .domain(d3.timeDay
-                .range(data[0].date, +data[data.length - 1].date + 1)
-                .filter(d => d.getDay() !== 0 && d.getDay() !== 6))
+        let dates = _.union(data.map(d => d.date), sentiment.map(d => d.date)); 
+        let minDate = new Date(Math.min.apply(null, dates)); 
+        let maxDate = new Date(Math.max.apply(null, dates));
+
+        xScale  .domain(d3.timeDay.range(minDate, +maxDate + 1))
                 .range([margin.left, width - margin.right])
                 .padding(0.2);
 
         yScale  .domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
                 .rangeRound([height - margin.bottom, margin.top]);
 
-        console.log('scales', xScale.domain(), xScale.range(), yScale.domain(), yScale.range());
-
     }; 
 
-    useEffect(() => {
-
-        let getData = async () => {
-
-            let data = (await d3.csv(`https://gist.githubusercontent.com/mbostock/696604b8395aa68d0e7dcd74abd21dbb/raw/55c17dab8461cde25ca8c735543fba839b0c940b/AAPL.csv`, d => {
-                const date = parseDate(d["Date"]);
-                let m = 1; 
-                return {
-                    date,
-                    high:   +d["High"] * m,
-                    low:    +d["Low"] * m,
-                    open:   +d["Open"] * m,
-                    close:  +d["Close"] * m
-                };
-            })).slice(-120);
-
-            let stories = []; 
-            for (let i = 0; i < data.length; i+=9) {
-                let { date } = data[i]; 
-                let score = Math.random();
-                let type = Math.random() < .5 ?  'positive' : 
-                          Math.random() < .5 ?   'neutral' : 
-                                                 'negative';  
-                stories.push({ date, score, type }); 
-            }
-            updateScales(data); 
-
-            dispatch(['SET PRICE DATA', data]); 
-            dispatch(["SET STORIES", stories]); 
-        }
-
-        getData();
-
-    }, []); 
+    updateScales(); 
 
     let createCandleStickChart = () => {
 
         let svg = d3.select(candlestickChartRef.current); 
-
 
         svg.append("g")
             .call(xAxis);
@@ -124,7 +113,7 @@ export default function Plot(props) {
         const g = svg.append("g")
             .attr("stroke", "#d1d1d1")
             .selectAll("g")
-            .data(state.priceData)
+            .data(data)
             .join("g")
             .attr("transform", d => {
                 return `translate(${xScale(d.date)},0)`; 
@@ -159,28 +148,33 @@ export default function Plot(props) {
 
         let onStoryClick = (story) => {
             let index = -1; 
-            for (let j = 0; j < state.stories.length; j++) {
-                if (state.stories[j].date === story.date) {
+            let stories = state.sentiments[ticker].slice(); 
+            for (let j = 0; j < stories.length; j++) {
+                let newdate = datetimeToDate(new Date(stories[j]['publishedAt'])); 
+                if (newdate.valueOf() === story.date.valueOf()) {
                     index = j; 
                     break; 
                 }
             }
             let proposal = { ticker, index }; 
+            console.log(proposal);
             dispatch(['SET STORY SCROLLER PROPOSAL', proposal]); 
         }
 
         svg.append('g')
             .selectAll('circle')
-            .data(state.stories)
+            .data(sentiment)
             .enter()
             .append('circle')
                 .on('click', onStoryClick)
                 .attr('r', d => circleScale(d.score))
-                .attr('cx', d => xScale(d.date))
+                .attr('cx', d => {
+                    return xScale(d.date); 
+                })
                 .attr('cy', 20)
                 .attr('stroke', '#e1e1e4')
                 .attr('stroke-width', .5)
-                .attr('fill', d => d.type === 'positive' ? 'green' : d.type === 'neutral' ? 'grey' : 'red');
+                .attr('fill', d => d.type === 'pos' ? 'green' : d.type === 'neutral' ? 'grey' : 'red');
 
     }
 
@@ -188,8 +182,6 @@ export default function Plot(props) {
 
         if (candlestickChartRef.current && 
             sentimentChartRef.current && 
-            state.priceData && 
-            state.stories && 
             height && 
             width && 
             !initialized) {
@@ -201,7 +193,7 @@ export default function Plot(props) {
 
         }
 
-    }, [candlestickChartRef.current, sentimentChartRef.current, state.priceData, state.stories, height, width]); 
+    }, [candlestickChartRef.current, sentimentChartRef.current, height, width]); 
 
     return (
         <div>
