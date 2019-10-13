@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"; 
 import { useRootContext } from "../context.js"; 
+import _ from "lodash"; 
+import useSmoothScroll from 'use-smooth-scroll';
 import "../css/Plot.css"; 
 import * as d3 from "d3";
 
@@ -14,17 +16,20 @@ const formatChange = (y0, y1) => {
     return (y0, y1) => f((y1 - y0) / y0);
 }; 
 
+const xScale = d3.scaleBand(); 
+const yScale = d3.scaleLog(); 
+
 export default function Plot(props) {
-
-    const width = 500; 
-    const height = 300; 
-
+    
+    const { ticker } = props; 
     const { state, dispatch } = useRootContext(); 
     const candlestickChartRef = useRef();
-    const sentimentChartRef = useRef()
+    const sentimentChartRef = useRef(); 
 
-    const [xScale, setXScale] = useState(() => d3.scaleBand()); 
-    const [yScale, setYScale] = useState(() => d3.scaleLog()); 
+    let width = state.plotWidth; 
+    let height = state.plotHeight; 
+
+    const [initialized, setInitialized] = useState(false); 
 
     let xAxis = (g) => {
 
@@ -66,6 +71,8 @@ export default function Plot(props) {
         yScale  .domain([d3.min(data, d => d.low), d3.max(data, d => d.high)])
                 .rangeRound([height - margin.bottom, margin.top]);
 
+        console.log('scales', xScale.domain(), xScale.range(), yScale.domain(), yScale.range());
+
     }; 
 
     useEffect(() => {
@@ -74,12 +81,13 @@ export default function Plot(props) {
 
             let data = (await d3.csv(`https://gist.githubusercontent.com/mbostock/696604b8395aa68d0e7dcd74abd21dbb/raw/55c17dab8461cde25ca8c735543fba839b0c940b/AAPL.csv`, d => {
                 const date = parseDate(d["Date"]);
+                let m = 1; 
                 return {
                     date,
-                    high:   +d["High"],
-                    low:    +d["Low"],
-                    open:   +d["Open"],
-                    close:  +d["Close"]
+                    high:   +d["High"] * m,
+                    low:    +d["Low"] * m,
+                    open:   +d["Open"] * m,
+                    close:  +d["Close"] * m
                 };
             })).slice(-120);
 
@@ -106,6 +114,7 @@ export default function Plot(props) {
 
         let svg = d3.select(candlestickChartRef.current); 
 
+
         svg.append("g")
             .call(xAxis);
     
@@ -117,7 +126,9 @@ export default function Plot(props) {
             .selectAll("g")
             .data(state.priceData)
             .join("g")
-            .attr("transform", d => `translate(${xScale(d.date)},0)`);
+            .attr("transform", d => {
+                return `translate(${xScale(d.date)},0)`; 
+            });
         
         g.append("line")
             .attr("y1", d => yScale(d.low))
@@ -143,13 +154,27 @@ export default function Plot(props) {
     let createSentimentChart = () => {
 
         let svg = d3.select(sentimentChartRef.current); 
+
         let circleScale = d3.scaleLinear().domain([0, 1]).range([3, 10]); 
 
+        let onStoryClick = (story) => {
+            let index = -1; 
+            for (let j = 0; j < state.stories.length; j++) {
+                if (state.stories[j].date === story.date) {
+                    index = j; 
+                    break; 
+                }
+            }
+            let proposal = { ticker, index }; 
+            dispatch(['SET STORY SCROLLER PROPOSAL', proposal]); 
+        }
+
         svg.append('g')
-            .selectAll('.rect')
+            .selectAll('circle')
             .data(state.stories)
             .enter()
             .append('circle')
+                .on('click', onStoryClick)
                 .attr('r', d => circleScale(d.score))
                 .attr('cx', d => xScale(d.date))
                 .attr('cy', 20)
@@ -166,42 +191,23 @@ export default function Plot(props) {
             state.priceData && 
             state.stories && 
             height && 
-            width) {
+            width && 
+            !initialized) {
 
             createCandleStickChart(); 
-            createSentimentChart(); 
-
-            // let colors = state.stories.map(d => d.type === 'positive' ? 'green' : d.type === 'neutral' ? 'grey' : 'red');
-            // let defs = svg.append('defs'); 
-            // let gradient = defs
-            //                 .append("linearGradient")
-            //                 .attr("id", "linear-gradient")
-
-            // let step = 100.0 / (colors.length - 1); 
-            // for (let i = 0; i < state.stories.length; i++) {
-            //     let offset = step * i; 
-            //     let color = colors[i]; 
-            //     gradient.append('stop')
-            //             .attr('offset', `${offset}%`)
-            //             .attr('stop-color', color); 
-            // }
-
-            // svg.append("rect")
-            //     .attr('x', xScale(state.stories[0].date))
-            //     .attr('y', 100)
-            //     .attr('width', xScale(state.stories[state.stories.length-1].date))
-            //     .attr('height', 10)
-            //     .attr("fill", "url(#linear-gradient)")
-
+            createSentimentChart();
+            
+            setInitialized(true); 
 
         }
 
-    }, [candlestickChartRef.current, state.priceData, state.stories, height, width]); 
+    }, [candlestickChartRef.current, sentimentChartRef.current, state.priceData, state.stories, height, width]); 
 
-    return <div>
-        <svg style={{ height, width }} ref={candlestickChartRef}/>
-        <svg style={{ height: 40, width }} ref={sentimentChartRef}/>
-    </div>
-    
+    return (
+        <div>
+            <svg style={{ height, width }} ref={candlestickChartRef}/>
+            <svg style={{ height: 40, width }} ref={sentimentChartRef}/>
+        </div>
+    );
 
 }

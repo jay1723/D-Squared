@@ -1,13 +1,13 @@
 import React, { useReducer, useState } from 'react';
-import { Layout, Menu, Icon, Tree, Input, Radio } from 'antd';
+import { Layout, Menu, Icon, Tree, Input, Radio, Card } from 'antd';
 import Plot from "./components/Plot.jsx"; 
 import { RootProvider } from "./context.js"; 
 import { ReducerInitialState, Reducer } from "./reducers/reducer.js"; 
+import StoryScroller from "./components/StoryScroller.jsx"; 
 import 'antd/dist/antd.css';
 import './css/App.css'; 
 
 const { Header, Sider, Content } = Layout;
-const { SubMenu } = Menu;
 
 function App() {
 
@@ -83,9 +83,20 @@ function App() {
               minHeight: 280,
             }}
           >
-            <div className="App" style={{ height: 500, width: 500 }}>
-              {state.selectedTickers.map(ticker => <div style={{display:'block'}}><Plot/></div>)}
+            <div className="App" style={{ width: "100%" }}>
+              {!state.stories ? <Plot/> : 
+                
+                
+                
+                !isMulti ? <div>
+                            <Plot ticker={'AAPL'}/>
+                            <StoryScroller ticker={'AAPL'} width={state.plotWidth} stories={state.stories}/>
+                          </div> 
+                          : null
+              }
             </div>
+
+
           </Content>
         </Layout>
       </Layout>         
