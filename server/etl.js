@@ -25,14 +25,13 @@ exports.createDocIdx = function(){
             for(let line of lines.slice(i)){
                 //CIK|Company Name|Form Type|Date Filed|File Name
                 let cols = line.split("|");
-                console.log(idx);
                 if(tickMap[cols[0]] !== undefined){
                     let ticker = tickMap[cols[0]];
                     let map;
                     let datedEntry = {"date":moment(cols[3], "YYYYMMDD"),"loc":cols[4]};
                     if(idx[ticker] === undefined){
                         map = {};
-                        map[cols[2]] = datedEntry;
+                        map[cols[2]] = [datedEntry];
                         idx[ticker] = map;
                     }
                     else{
@@ -46,28 +45,21 @@ exports.createDocIdx = function(){
                     }
                 }
             }
-            console.log(idx);
         }
         
         let getIdxForQtr = function(dirIdx,qtr){
-            console.log(dirIdx);
             let idx = JSON.parse(dirIdx);
             let links = [];
             let proms = [];
-            if(idx["directory"]["item"] > 100){
-                console.log("wtf");
-                return;
-            }
             for(let item of idx["directory"]["item"]){
                 let fname = item["name"];
                 if(/master.*\.idx/i.test(fname)){
                     links.push(rPath+qtr+'/'+fname);
                 }
             }
-            for(let link of links){
+            for(let link of links.slice(-2,-1)){
                 bigoloop();
                 proms.push(request.get("https://www.sec.gov/"+link, (err,res,body) => {
-                    console.log("fuk");
                     getIdxForFdate(body);
                   }));
             }
@@ -76,7 +68,6 @@ exports.createDocIdx = function(){
     
         let getTickers = function(){
             return request.get("https://www.sec.gov/files/company_tickers.json", (err,res,body) => {
-            console.log(body)
             let b = JSON.parse(body);
             let i = 0;
                 while(b[String(i)] !== undefined){
@@ -89,7 +80,6 @@ exports.createDocIdx = function(){
 
         
         getTickers().then(() => {
-            console.log("wop");
             let proms = [];
             let oproms = [];
             for(let qtr of ["QTR1","QTR2","QTR3","QTR4"]){
