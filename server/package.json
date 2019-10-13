@@ -6,7 +6,8 @@
     "cross-fetch": "^3.0.4",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
-    "react-scripts": "3.2.0"
+    "react-scripts": "3.2.0",
+    "request-promise": "^4.2.4"
   },
   "scripts": {
     "start": "node index.js"
