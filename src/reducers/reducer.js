@@ -2,7 +2,8 @@
 export const ReducerInitialState = {
 
     priceData: null, 
-    tickers: ["AAPL", "GOOG", "AMZN"]
+    allTickers: ["AAPL", "GOOG", "AMZN"], 
+    selectedTickers: []
 
 };
 
@@ -16,8 +17,8 @@ export function Reducer(state, [type, payload]) {
         case 'SET STORIES': 
             return { ...state, stories: payload }; 
 
-        case 'SET TICKERS': 
-            return { ...state, tickers: payload }; 
+        case 'SET SELECTED TICKERS': 
+            return { ...state, selectedTickers: payload }; 
 
             
         case 'SET COMPANY':
