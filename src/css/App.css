@@ -1,6 +1,10 @@
 .ticker-list span {
     color: white; 
 }
+iframe{
+    width: 100%;
+    height: 500px;
+}
 
 img.zoomed {
     transform:scale(4);

@@ -23,9 +23,9 @@ export default function StoryScroller(props) {
         if (state.storyScrollerProposal && 
             state.storyScrollerProposal.ticker === ticker) {
 
-            // let container = carouselRef.current; 
-            // let containerDims = container.getBoundingClientRect(); 
-            // let ithChildDims = container.children[state.storyScrollerProposal.index].getBoundingClientRect(); 
+            let container = carouselRef.current; 
+            let containerDims = container.getBoundingClientRect(); 
+            let ithChildDims = container.children[state.storyScrollerProposal.index].getBoundingClientRect(); 
             let containerOffset = state.storyScrollerProposal.index * 198 + state.storyScrollerProposal.index * 4; 
 
             scrollTo(containerOffset);

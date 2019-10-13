@@ -1,10 +1,14 @@
 import React, { useReducer, useState, useEffect } from 'react';
 import { Layout, Tree, Input, Radio, Row, Col } from 'antd';
-import Plot from "./components/Plot.jsx"; 
 import API from "./components/Api.jsx"; 
 import { RootProvider } from "./context.js"; 
 import { ReducerInitialState, Reducer } from "./reducers/reducer.js"; 
+import ReportViewer from "./components/ReportViewer.jsx";
+import DocFrame from "./components/DocFrame.jsx";
 import StoryScroller from "./components/StoryScroller.jsx"; 
+import CandlestickChart from "./components/CandlestickChart.jsx"; 
+import SentimentChart from "./components/SentimentChart.jsx";
+import MultiPlot from "./components/MultiPlot.jsx"; 
 import 'antd/dist/antd.css';
 import './css/App.css'; 
 
@@ -65,7 +69,8 @@ function App() {
 
         <Layout>
           <Header style={{ background: '#fff' }}>
-
+          <img src={require('./D2logo.svg')} className="zoomed" width="64" height="64" align="right"/>
+            {/* 
             <Radio.Group 
             defaultValue={isMulti ? 'multiple' : 'single'} 
             buttonStyle="solid"
@@ -82,7 +87,6 @@ function App() {
               <Radio.Button value="single">Single</Radio.Button>
               <Radio.Button value="multiple">Multiple</Radio.Button>
             </Radio.Group>
-            <img src={require('./D2logo.svg')} className="zoomed" width="64" height="64" align="right"/>
           </Header>
           <Content
             style={{
@@ -100,7 +104,10 @@ function App() {
                                     return <React.Fragment>
                                       <Row type="flex" justify="center" align="top">
                                         <Col style={{ width: state.plotWidth }}>
-                                          <Plot ticker={ticker}/>
+                                          <div>
+                                            <CandlestickChart ticker={ticker}/>
+                                            <SentimentChart ticker={ticker}/>
+                                          </div>
                                         </Col>
                                       </Row>
                                       <Row type="flex" justify="center" align="top">
@@ -108,7 +115,13 @@ function App() {
                                           <StoryScroller ticker={ticker} width={state.plotWidth}/>
                                         </Col>
                                       </Row>
-
+                                      <Row type="flex" justify="center" align="top">
+                                        <Col style={{ width: state.plotWidth }}>
+                                          <ReportViewer/>
+                                          <DocFrame/>
+                                        </Col>
+                                      </Row>
+                                      
 
                                     </React.Fragment>
                                       
@@ -120,6 +133,7 @@ function App() {
                                 })()
                           )
                           : null
+                    
               }
 
           </Content>
