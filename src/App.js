@@ -82,7 +82,7 @@ function App() {
               <Radio.Button value="single">Single</Radio.Button>
               <Radio.Button value="multiple">Multiple</Radio.Button>
             </Radio.Group>
-
+            <img src={require('./D2logo.svg')} className="zoomed" width="64" height="64" align="right"/>
           </Header>
           <Content
             style={{

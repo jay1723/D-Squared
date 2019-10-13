@@ -1,0 +1,9 @@
+.ant-card-body {
+    text-overflow: ellipsis;
+    height: 250;
+    width: 250;
+}
+
+a.title {
+    font-size: medium;
+}

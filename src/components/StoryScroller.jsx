@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import useSmoothScroll from 'use-smooth-scroll';
 import _ from "lodash"; 
 import { useRootContext } from "../context.js"; 
+import "../css/StoryScroller.css"; 
+const {Meta} = Card;
 
 export default function StoryScroller(props) {
 
@@ -34,11 +36,13 @@ export default function StoryScroller(props) {
 
     }, [state.storyScrollerProposal]); 
 
+    console.log("story ", JSON.parse(stories[0].sentiment).label);
     return <div ref={carouselRef} style={{ width, overflowX: 'scroll', display: 'flex' }}>
         {stories.map(story => 
-            <div style={{ minWidth: 250, margin: 4 }}>
-                <Card style={{ width: '100%', height: 160, fontSize: 10 }} title={story.title}>
-                    <p>{story.description}</p>
+            <div style={{ minWidth: 250, minHeight: 250, margin: 4, minHeight: 250 }}>
+                <Card hoverable="true" title={<a className="title" href={story.url}>{story.title}</a>}>
+                    <Meta description={story.source.name} />
+                    <p className="cardDesc">{story.description}</p>
                 </Card>
             </div>
         )}

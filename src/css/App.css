@@ -3,9 +3,9 @@
 }
 
 img.zoomed {
-    transform:scale(3);
-    -ms-transform:scale(3); /* IE 9 */
-    -moz-transform:scale(3); /* Firefox */
-    -webkit-transform:scale(3); /* Safari and Chrome */
-    -o-transform:scale(3); /* Opera */
+    transform:scale(4);
+    -ms-transform:scale(4); /* IE 9 */
+    -moz-transform:scale(4); /* Firefox */
+    -webkit-transform:scale(4); /* Safari and Chrome */
+    -o-transform:scale(4); /* Opera */
 }
