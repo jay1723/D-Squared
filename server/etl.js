@@ -2,7 +2,7 @@ var request = require('request-promise');
 var moment = require('moment');
 let bigoloop = function(){
     let j = 0;
-    for(i=0; i<1000000000;i++){
+    for(i=0; i<50000000;i++){
         j++;
     }
 }
@@ -29,12 +29,10 @@ exports.createDocIdx = function(){
                     let ticker = tickMap[cols[0]];
                     let map;
                     let datedEntry = {"date":moment(cols[3], "YYYYMMDD"),"loc":cols[4]};
-                    console.log(idx[ticker]);
                     if(idx[ticker] === undefined){
                         map = {};
-                        map[cols[2]] = datedEntry;
+                        map[cols[2]] = [datedEntry];
                         idx[ticker] = map;
-                        console.log(idx);
                     }
                     else{
                         map = idx[ticker];
@@ -47,29 +45,21 @@ exports.createDocIdx = function(){
                     }
                 }
             }
-            console.log(idx);
         }
         
         let getIdxForQtr = function(dirIdx,qtr){
-            console.log(dirIdx);
             let idx = JSON.parse(dirIdx);
             let links = [];
             let proms = [];
-            if(idx["directory"]["item"] > 100){
-                console.log("wtf");
-                return;
-            }
             for(let item of idx["directory"]["item"]){
                 let fname = item["name"];
                 if(/master.*\.idx/i.test(fname)){
                     links.push(rPath+qtr+'/'+fname);
                 }
             }
-            for(let link of links){
-                console.log(links);
+            for(let link of links.slice(-2,-1)){
+                bigoloop();
                 proms.push(request.get("https://www.sec.gov/"+link, (err,res,body) => {
-                    console.log("fuk");
-                    bigoloop();
                     getIdxForFdate(body);
                   }));
             }
@@ -78,9 +68,10 @@ exports.createDocIdx = function(){
     
         let getTickers = function(){
             return request.get("https://www.sec.gov/files/company_tickers.json", (err,res,body) => {
+            let b = JSON.parse(body);
             let i = 0;
-                while(body[String(i)] !== undefined){
-                    let cur = body[String(i)];
+                while(b[String(i)] !== undefined){
+                    let cur = b[String(i)];
                     tickMap[cur["cik_str"]] = cur["ticker"];
                     i++;
                 }
@@ -89,7 +80,6 @@ exports.createDocIdx = function(){
 
         
         getTickers().then(() => {
-            console.log("wop");
             let proms = [];
             let oproms = [];
             for(let qtr of ["QTR1","QTR2","QTR3","QTR4"]){
