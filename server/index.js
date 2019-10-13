@@ -7,6 +7,8 @@ app.use(cors());
 const port = 4000;
 app.use(express.json());
 const request = require('request');
+const etl = require('./etl.js');
+
 
 dotenv.config(); 
 
@@ -14,7 +16,28 @@ const newsapi = new NewsAPI(process.env.NEWS_API_KEY);
 const  iex = require( 'iexcloud_api_wrapper' )
  
 
+//Big ol index
+let idx;
 // Routes
+
+app.get('/secforms', async function(req,res){
+    if(idx === undefined){
+        idx = await etl.createDocIdx();
+    }
+    let ticker = req.query.ticker;
+    if(ticker === undefined){
+        res.status(400).send({
+            message: 'Please provide a ticker'
+         });
+         return;
+    }
+    let filings = idx[ticker];
+    if(filings === undefined){
+        res.send({});
+        return
+    }
+    res.send(filings);
+});
 
 app.get('/getStockInfo', async function(req, res){
     let result = await history(req.query.ticker);

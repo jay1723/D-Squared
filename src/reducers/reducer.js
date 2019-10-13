@@ -5,8 +5,8 @@ export const ReducerInitialState = {
     allTickers: ["AAPL", "GOOG", "AMZN"], 
     selectedTickers: [], 
     plotWidth: 650, 
-    plotHeight: 300
-
+    plotHeight: 300,
+    filings: {}
 };
 
 export function Reducer(state, [type, payload]) {
@@ -27,6 +27,9 @@ export function Reducer(state, [type, payload]) {
             
         case 'SET COMPANY':
             return {...state, company: payload};
+
+        case 'SET FILING INDEX':
+            return{...state, filings: payload}
     }
 
 }
