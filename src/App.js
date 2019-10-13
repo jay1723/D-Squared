@@ -1,6 +1,7 @@
-import React, { useReducer, useState } from 'react';
+import React, { useReducer, useState, useEffect } from 'react';
 import { Layout, Menu, Icon, Tree, Input, Radio, Card } from 'antd';
 import Plot from "./components/Plot.jsx"; 
+import API from "./components/Api.jsx"; 
 import { RootProvider } from "./context.js"; 
 import { ReducerInitialState, Reducer } from "./reducers/reducer.js"; 
 import StoryScroller from "./components/StoryScroller.jsx"; 
@@ -12,11 +13,19 @@ const { Header, Sider, Content } = Layout;
 function App() {
 
   const [state, dispatch] = useReducer(Reducer, ReducerInitialState);
-  const [selectableTickerValues, setSelectableTickerValues] = useState(state.allTickers);
+  const [selectableTickers, setSelectableTickers] = useState([]); 
   const [isMulti, setIsMulti] = useState(false); 
+
+  let allTickers = state.allTickers.map(d => d.ticker); 
+
+  useEffect(() => {
+    setSelectableTickers(state.allTickers.map(d => d.ticker)); 
+  }, [state.allTickers]); 
 
   return (
     <RootProvider value={{ state, dispatch }}>
+
+      <API/>
 
       <Layout>
         
@@ -27,10 +36,10 @@ function App() {
             <Input placeholder="Search" onChange={(e) => {
               let prefix = e.target.value; 
               prefix = prefix.toLowerCase(); 
-              setSelectableTickerValues(
-                prefix.length === 0 ? state.allTickers : 
-                                      state.allTickers.filter(key => key.toLowerCase().slice(0, prefix.length) === prefix)
-              ); 
+              setSelectableTickers(
+                prefix.length === 0 ? allTickers : 
+                                      allTickers.filter(key => key.toLowerCase().slice(0, prefix.length) === prefix)
+            ); 
             }}/>
 
             {/* Select one or more company tickers */}
@@ -49,7 +58,7 @@ function App() {
                 }
                 
             }}>
-              {selectableTickerValues.map(key => <Tree.TreeNode title={key} key={key}/>)}
+              {selectableTickers.map(key => <Tree.TreeNode title={key} key={key}/>)}
             </Tree>
           </div>
         </Sider>
@@ -84,13 +93,22 @@ function App() {
             }}
           >
             <div className="App" style={{ width: "100%" }}>
-              {!state.stories ? <Plot/> : 
-                
-                
-                
-                !isMulti ? <div>
-                            <Plot ticker={'AAPL'}/>
-                            <StoryScroller ticker={'AAPL'} width={state.plotWidth} stories={state.stories}/>
+              {!isMulti ? <div>
+                            {state.selectedTickers.length === 0 ? null : 
+                              (() => {
+                                let ticker = state.selectedTickers[0]; 
+                                if (state.sentiments[ticker] && state.priceData[ticker]) {
+                                  return <React.Fragment>
+                                    <Plot ticker={ticker}/>
+                                    <StoryScroller ticker={ticker} width={state.plotWidth}/>
+                                  </React.Fragment>
+                                } else {
+                                  return null; 
+                                }
+                                
+                              })()
+
+                            }
                           </div> 
                           : null
               }
