@@ -123,7 +123,16 @@ export default function API(props) {
 
     // }, [state.selectedCompanies]); 
 
-    return null; 
-    
+    useEffect(() => {
+        let url = "http://localhost:4000/secforms?ticker=" + state.company;
+        let getData = async () => {
+            let data = await fetch(url).then(response => response.json())
+            dispatch(['SET FILING INDEX', data]);
+        }
 
+        getData();
+
+    }, [state.selectedCompanies]); 
+    
+    return null;
 }

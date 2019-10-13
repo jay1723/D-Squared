@@ -16,8 +16,8 @@ export const ReducerInitialState = {
     
     // the dimensions for plots 
     plotWidth: 650, 
-    plotHeight: 300
-
+    plotHeight: 300,
+    filings: {}
 };
 
 export function Reducer(state, [type, payload]) {
@@ -40,8 +40,10 @@ export function Reducer(state, [type, payload]) {
             return { ...state, storyScrollerProposal: payload }; 
             
         case 'SET COMPANY':
-            return { ...state, company: payload };
-            
+            return {...state, company: payload};
+
+        case 'SET FILING INDEX':
+            return{...state, filings: payload}
     }
 
 }
