@@ -3,10 +3,16 @@ import { Layout, Tree, Input, Radio, Row, Col } from 'antd';
 import API from "./components/Api.jsx"; 
 import { RootProvider } from "./context.js"; 
 import { ReducerInitialState, Reducer } from "./reducers/reducer.js"; 
+<<<<<<< HEAD
+import StoryScroller from "./components/StoryScroller.jsx";
+import ReportViewer from "./components/ReportViewer.jsx";
+import DocFrame from "./components/DocFrame.jsx";
+=======
 import StoryScroller from "./components/StoryScroller.jsx"; 
 import CandlestickChart from "./components/CandlestickChart.jsx"; 
 import SentimentChart from "./components/SentimentChart.jsx";
 import MultiPlot from "./components/MultiPlot.jsx"; 
+>>>>>>> d1da90db1cb77492ced74aa65b24bb10a23768fd
 import 'antd/dist/antd.css';
 import './css/App.css'; 
 
@@ -115,6 +121,13 @@ function App() {
                                           <StoryScroller ticker={ticker} width={state.plotWidth}/>
                                         </Col>
                                       </Row>
+                                      <Row type="flex" justify="center" align="top">
+                                        <Col style={{ width: state.plotWidth }}>
+                                          <ReportViewer/>
+                                          <DocFrame/>
+                                        </Col>
+                                      </Row>
+                                      
 
                                     </React.Fragment>
                                       

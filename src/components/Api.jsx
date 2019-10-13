@@ -22,7 +22,7 @@ export default function API(props) {
                 newD['ticker'] = d['Symbol']; 
                 tickerToName[newD['ticker']] = newD['name']; 
                 return newD; 
-            }).slice(0,100); 
+            }).slice(0,1000); 
             dispatch(['SET ALL TICKERS', data]);
             dispatch(['SET TICKER TO NAME', tickerToName])
         }
@@ -141,6 +141,29 @@ export default function API(props) {
 
     // }, [state.selectedCompanies]); 
 
+    useEffect(() => {
+        let tickers = state.selectedTickers.slice(); 
+        let baseurl = "http://localhost:4000/secforms?ticker=";
+
+        let getData = async () => { 
+            // request data for all new tickers 
+            let proms = []; 
+            for (let ticker of tickers) {
+                proms.push(fetch(baseurl+ticker).then(response => response.json())); 
+            }
+            
+            let result = await Promise.all(proms);
+            let newIdx = {};
+            let i = 0;
+
+            for(let ticker of tickers){
+                newIdx[ticker] = result[i];
+                i++;
+            }
+
+            dispatch(['SET FILING INDEX', newIdx]); 
+        }
+        
     // useEffect(() => {
     //     let url = "http://localhost:4000/secforms?ticker=" + state.company;
     //     let getData = async () => {
@@ -150,6 +173,7 @@ export default function API(props) {
 
     //     getData();
 
+    }, [state.selectedTickers]); 
     // }, [state.selectedCompanies]); 
     
     console.log('rerender shadow');
