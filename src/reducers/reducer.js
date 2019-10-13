@@ -24,11 +24,14 @@ export function Reducer(state, [type, payload]) {
 
     switch (type) {
 
-        case 'SET PRICE DATA': 
-            return { ...state, priceData: payload }; 
-            
-        case 'SET SENTIMENTS': 
-            return { ...state, sentiments: payload }; 
+        case 'SET DATA': 
+            let newState = { ...state }; 
+            let keys = Object.keys(payload.priceData); 
+            for (let k of keys) {
+                newState['priceData'][k] =  payload['priceData'][k]; 
+                newState['sentiments'][k] =  payload['sentiments'][k]; 
+            }
+            return newState;  
 
         case 'SET ALL TICKERS': 
             return { ...state, allTickers: payload }; 

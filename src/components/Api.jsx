@@ -37,7 +37,7 @@ export default function API(props) {
 
         let makeUrls = ticker => ({
             stonks: `http://localhost:4000/getStockInfo?ticker=${ticker}`, 
-            sentiments: `http://localhost:4000/getSentiment?company=${state.tickerToName[ticker]}`
+            sentiments: `http://localhost:4000/getSentiment?company=${ticker}`
         }); 
 
         // get all tickers which we need to get data for 
@@ -58,15 +58,20 @@ export default function API(props) {
         // }
 
         let getData = async () => {
-
-            let tickers = state.selectedTickers.slice(); 
-
+            
             // request data for all new tickers 
             let proms = []; 
-            for (let ticker of tickers) {
-                let { stonks, sentiments } = makeUrls(ticker); 
-                proms.push(fetch(stonks).then(response => response.json())); 
-                proms.push(fetch(sentiments).then(response => response.json())); 
+            let requestedTickers = []; 
+            for (let i = 0; i < state.selectedTickers.length; i++) {
+                let ticker = state.selectedTickers[i]; 
+                let hasData = state.priceData[ticker] && state.sentiments[ticker]; 
+                if (!hasData) {
+                    let { stonks, sentiments } = makeUrls(ticker); 
+                    requestedTickers.push(ticker); 
+                    console.log("queueing request for", ticker);
+                    proms.push(fetch(stonks).then(response => response.json())); 
+                    proms.push(fetch(sentiments).then(response => response.json())); 
+                }
             }
 
             let parseSentimentArray = sentiment => {
@@ -94,20 +99,30 @@ export default function API(props) {
             let result = await Promise.all(proms); 
             let newPriceData = {}; 
             let newSentiments = {}; 
-            let i = 0; 
-            for (let ticker of tickers) {
+
+            console.log('num requests made', requestedTickers.length); 
+            
+            for (let i = 0, j = 0; i < requestedTickers.length; i++, j+=2) {
+
+                let ticker = requestedTickers[i]; 
+
+                console.log("REQUESTING FOR ", ticker);
+
+                let rsentiment = result[j]; 
+
+                if (rsentiment.length === 1 && rsentiment[0] === -1) {
+                    continue; 
+                }
                 
-                newPriceData[ticker] = parsePriceArray(result[i]); 
-                newSentiments[ticker] = parseSentimentArray(result[i+1]); 
+                newPriceData[ticker] = parsePriceArray(result[j]); 
+                newSentiments[ticker] = parseSentimentArray(result[j+1]); 
 
                 newPriceData[ticker] = _.sortBy(newPriceData[ticker], d => d.date); 
                 newSentiments[ticker] = _.sortBy(newSentiments[ticker], d => d.date); 
 
-                i += 2; 
             }
 
-            dispatch(['SET PRICE DATA', newPriceData]); 
-            dispatch(['SET SENTIMENTS', newSentiments]); 
+            dispatch(['SET DATA', { priceData: newPriceData, sentiments: newSentiments }]); 
 
         }
 
@@ -137,5 +152,6 @@ export default function API(props) {
 
     // }, [state.selectedCompanies]); 
     
-    return null;
+    console.log('rerender shadow');
+    return <div style={{ display: 'none' }}>{state.selectedTickers.map(ticker => <p>{ticker}</p>)}</div>;
 }

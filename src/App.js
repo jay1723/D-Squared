@@ -6,6 +6,7 @@ import { ReducerInitialState, Reducer } from "./reducers/reducer.js";
 import StoryScroller from "./components/StoryScroller.jsx"; 
 import CandlestickChart from "./components/CandlestickChart.jsx"; 
 import SentimentChart from "./components/SentimentChart.jsx";
+import MultiPlot from "./components/MultiPlot.jsx"; 
 import 'antd/dist/antd.css';
 import './css/App.css'; 
 
@@ -66,7 +67,7 @@ function App() {
 
         <Layout>
           <Header style={{ background: '#fff' }}>
-
+{/* 
             <Radio.Group 
             defaultValue={isMulti ? 'multiple' : 'single'} 
             buttonStyle="solid"
@@ -82,7 +83,7 @@ function App() {
             >
               <Radio.Button value="single">Single</Radio.Button>
               <Radio.Button value="multiple">Multiple</Radio.Button>
-            </Radio.Group>
+            </Radio.Group> */}
 
           </Header>
           <Content
@@ -113,7 +114,6 @@ function App() {
                                         </Col>
                                       </Row>
 
-
                                     </React.Fragment>
                                       
                                       
@@ -124,6 +124,7 @@ function App() {
                                 })()
                           )
                           : null
+                    
               }
 
           </Content>
