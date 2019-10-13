@@ -3,11 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "moment": "^2.24.0",
+    "cross-fetch": "^3.0.4",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-scripts": "3.2.0",
-    "request": "^2.88.0",
     "request-promise": "^4.2.4"
   },
   "scripts": {
@@ -17,9 +16,13 @@
   "devDependencies": {
     "@babel/polyfill": "^7.6.0",
     "alphavantage": "^2.0.0",
+    "axios": "^0.19.0",
+    "cheerio": "^1.0.0-rc.3",
     "core-js": "^2.6.5",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
-    "newsapi": "^2.4.0"
+    "iexcloud_api_wrapper": "^1.1.5",
+    "newsapi": "^2.4.0",
+    "request": "^2.88.0"
   }
 }
