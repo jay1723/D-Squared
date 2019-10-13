@@ -163,7 +163,7 @@ export default function API(props) {
 
             dispatch(['SET FILING INDEX', newIdx]); 
         }
-        
+
     // useEffect(() => {
     //     let url = "http://localhost:4000/secforms?ticker=" + state.company;
     //     let getData = async () => {
