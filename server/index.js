@@ -9,6 +9,39 @@ const request = require('request');
 dotenv.config(); 
 
 const newsapi = new NewsAPI(process.env.NEWS_API_KEY);
+const  iex = require( 'iexcloud_api_wrapper' )
+ 
+
+// Routes
+
+app.get('/getStockInfo', async function(req, res){
+    let result = await history(req.query.ticker);
+    res.send(result);
+})
+
+app.get('/getSentiment', async function(req, res){
+    // console.log(req);
+    // let company = req.body.company;
+    let company = req.query.company;
+    console.log(`getSentiment called with parameter ${company}`);
+    let ret = await asyncCall(company);
+    console.log(ret);
+    res.send(ret);
+})
+
+app.get('/getNasdaqTicker', function(req, res){
+    const ticker = require('./nasdaq.json');
+    res.send(ticker);
+})
+app.listen(port, () => console.log(`listening on http://localhost:${port}`));
+
+
+// Helper functions that call APIs
+const history = async (sym) => {
+    const historyData = await iex.history(sym, {"period": "1y"});
+    // do something with returned quote data
+    return historyData;
+};
 
 function getNewsStories(company){
     return new Promise(resolve => {
@@ -26,17 +59,6 @@ async function asyncCall(company){
     let finalResult = await getSentimentForNewsStories(result).catch((err) => console.log(err));
     return finalResult;
 }
-app.get('/getSentiment', async function(req, res){
-    // console.log(req);
-    console.log(`getSentiment called with parameter ${req.body.company}`);
-    // let company = req.body.company;
-    let company = req.query.company;
-    let ret = await asyncCall(company);
-    console.log(ret);
-    res.send(ret);
-})
-
-app.listen(port, () => console.log(`listening on http://localhost:${port}`));
 
 function getSentimentForNewsStories(stories){
     return new Promise(resolve => {
