@@ -69,7 +69,8 @@ function App() {
 
         <Layout>
           <Header style={{ background: '#fff' }}>
-{/* 
+            
+            {/* 
             <Radio.Group 
             defaultValue={isMulti ? 'multiple' : 'single'} 
             buttonStyle="solid"
@@ -85,7 +86,8 @@ function App() {
             >
               <Radio.Button value="single">Single</Radio.Button>
               <Radio.Button value="multiple">Multiple</Radio.Button>
-            </Radio.Group> */}
+            </Radio.Group> 
+            */}
 
           </Header>
           <Content
